@@ -1,9 +1,8 @@
-name: Upload Build Artifacts to Tigris
+name: Release
 
 on:
   workflow_run:
-    workflows:
-      ["Package Terminalwire for Multiple Operating System's & Architectures"]
+    workflows: ["Package"]
     types:
       - completed
 
