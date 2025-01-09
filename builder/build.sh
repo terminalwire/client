@@ -9,7 +9,7 @@ PACKAGE_PATH="$BUILD_PATH/package"
 mkdir -p "$PACKAGE_PATH"
 
 ### Copy the package template into the build directory
-cp -rv "$ROOT_PATH/template/" "$PACKAGE_PATH"
+cp -r "$ROOT_PATH/template/." "$PACKAGE_PATH/"
 
 # Remove all the .gitkeep files
 rm "$PACKAGE_PATH"/**/.gitkeep
