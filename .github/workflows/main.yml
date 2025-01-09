@@ -60,3 +60,24 @@ jobs:
         with:
           name: build-${{ matrix.os }}-${{ matrix.arch }}
           path: build/build.tar.gz
+
+      # Step 7: Upload to S3-compatible bucket
+      - name: Upload artifacts to S3 bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          # Use the GitHub Actions run ID as the build ID
+          BUILD_ID=${{ github.run_id }}
+          TARGET_DIR="builds/$BUILD_ID"
+
+          # Ensure the artifacts directory exists
+          if [ ! -f build/build.tar.gz ]; then
+            echo "Artifact file not found: build/build.tar.gz"
+            exit 1
+          fi
+
+          # Upload artifact to S3
+          echo "Uploading build artifact to S3 bucket"
+          aws s3 cp build/build.tar.gz "$AWS_ENDPOINT_URL_S3/$TARGET_DIR/build-${{ matrix.os }}-${{ matrix.arch }}.tar.gz" --acl public-read
