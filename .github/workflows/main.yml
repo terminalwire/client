@@ -64,6 +64,7 @@ jobs:
   upload:
     needs: package
     runs-on: ubuntu-latest
+    environment: Tigris Terminalwire Client Bucket
 
     steps:
       - name: Download build artifacts
