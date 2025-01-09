@@ -83,6 +83,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           S3_BUCKET_NAME: ${{ vars.S3_BUCKET_NAME }}
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_ENDPOINT_URL_S3: ${{ vars.AWS_ENDPOINT_URL_S3 }}
+          AWS_ENDPOINT_URL_IAM: ${{ vars.AWS_ENDPOINT_URL_IAM }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
         run: |
           # Use the GitHub Actions run ID as the build ID
           BUILD_ID=${{ github.run_id }}
