@@ -1,4 +1,4 @@
-name: Package
+name: Package and Upload
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  package:
     env:
       # Set the version of ruby-install to use
       RUBY_INSTALL_VERSION: 0.9.4
@@ -61,23 +61,35 @@ jobs:
           name: build-${{ matrix.os }}-${{ matrix.arch }}
           path: build/build.tar.gz
 
-      # Step 7: Upload to S3-compatible bucket
-      - name: Upload artifacts to S3 bucket
+  upload:
+    needs: package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts/
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          ls -R artifacts/
+
+      # Upload to S3-compatible bucket
+      - name: Upload artifacts to Tigris
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          S3_BUCKET_NAME: ${{ vars.S3_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
         run: |
           # Use the GitHub Actions run ID as the build ID
           BUILD_ID=${{ github.run_id }}
           TARGET_DIR="builds/$BUILD_ID"
 
-          # Ensure the artifacts directory exists
-          if [ ! -f build/build.tar.gz ]; then
-            echo "Artifact file not found: build/build.tar.gz"
-            exit 1
-          fi
-
-          # Upload artifact to S3
-          echo "Uploading build artifact to S3 bucket"
-          aws s3 cp build/build.tar.gz "$AWS_ENDPOINT_URL_S3/$TARGET_DIR/build-${{ matrix.os }}-${{ matrix.arch }}.tar.gz" --acl public-read
+          # Upload each artifact to Tigris
+          find artifacts -type f | while read file; do
+            BASENAME=$(basename "$file")
+            echo "Uploading $BASENAME to S3 bucket"
+            aws s3 cp "$file" "s3://$S3_BUCKET_NAME/$TARGET_DIR/$BASENAME" --acl public-read
+          done
