@@ -1,0 +1,34 @@
+name: Upload Build Artifacts to Tigris
+
+on:
+  workflow_run:
+    workflows:
+      ["Package Terminalwire for Multiple Operating System's & Architectures"]
+    types:
+      - completed
+
+jobs:
+  upload:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts/
+
+      - name: Upload artifacts to Tigris bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          # Use the GitHub Actions run ID as the build ID
+          BUILD_ID=${{ github.event.workflow_run.id }}
+          TARGET_DIR="builds/$BUILD_ID"
+
+          # Upload all artifacts to S3
+          for file in artifacts/*; do
+            aws s3 cp "$file" "s3://$S3_BUCKET_NAME/$TARGET_DIR/$(basename $file)" --acl public-read
+          done
