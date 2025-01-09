@@ -60,3 +60,17 @@ jobs:
         with:
           name: build-${{ matrix.os }}-${{ matrix.arch }}
           path: build/build.tar.gz
+
+      # Upload artifacts to S3-compatible bucket
+      - name: Upload artifacts to Tigris
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          # Use the GitHub Actions run ID as the build ID
+          BUILD_ID=${{ github.run_id }}
+          TARGET_DIR="builds/$BUILD_ID"
+
+          # Upload to S3-compatible bucket
+          aws s3 cp build/build.tar.gz s3://$S3_BUCKET_NAME/$TARGET_DIR/build-${{ matrix.os }}-${{ matrix.arch }}.tar.gz --acl public-read
