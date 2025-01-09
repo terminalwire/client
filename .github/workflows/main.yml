@@ -90,6 +90,6 @@ jobs:
           # Upload each artifact to Tigris
           find artifacts -type f | while read file; do
             BASENAME=$(basename "$file")
-            echo "Uploading $BASENAME to S3 bucket"
+            echo "Uploading $BASENAME to S3 bucket $S3_BUCKET_NAME"
             aws s3 cp "$file" "s3://$S3_BUCKET_NAME/$TARGET_DIR/$BASENAME" --acl public-read
           done
