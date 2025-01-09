@@ -53,13 +53,14 @@ jobs:
       - name: Run build script
         run: |
           bash builder/build.sh
+          mv build/build.tar.gz ${{ matrix.os }}-${{ matrix.arch }}.tar.gz
 
       # Upload the final tar.gz artifact for each OS/arch
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: build-${{ matrix.os }}-${{ matrix.arch }}
-          path: build/build.tar.gz
+          name: ${{ matrix.os }}-${{ matrix.arch }}
+          path: ${{ matrix.os }}-${{ matrix.arch }}.tar.gz
 
   upload:
     needs: package
