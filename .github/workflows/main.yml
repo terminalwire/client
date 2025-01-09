@@ -57,7 +57,7 @@ jobs:
 
       # Upload the final tar.gz artifact for each OS/arch
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-${{ matrix.arch }}
           path: ${{ matrix.os }}-${{ matrix.arch }}.tar.gz
@@ -69,7 +69,7 @@ jobs:
 
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts/
 
