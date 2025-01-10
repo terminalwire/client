@@ -11,12 +11,12 @@ jobs:
     env:
       # Set the version of ruby-install to use
       RUBY_INSTALL_VERSION: 0.9.4
-      BUILD_PATH: build/${{ matrix.os }}-${{ matrix.arch }}
-      ARCHIVE_PATH: ${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+      BUILD_PATH: ${{ github.workspace }}/${{ matrix.os }}-${{ matrix.arch }}
+      ARCHIVE_PATH: ${{ github.workspace }}/${{ matrix.os }}-${{ matrix.arch }}.tar.gz
 
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         arch: [x86_64, arm64]
