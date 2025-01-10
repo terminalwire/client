@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        arch: [x86_64, arm64]
+        arch: [arm64]
 
     steps:
       - name: Check out repository
