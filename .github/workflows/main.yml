@@ -11,6 +11,8 @@ jobs:
     env:
       # Set the version of ruby-install to use
       RUBY_INSTALL_VERSION: 0.9.4
+      BUILD_PATH: build/${{ matrix.os }}-${{ matrix.arch }}
+      ARCHIVE_PATH: ${{ matrix.os }}-${{ matrix.arch }}.tar.gz
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -49,11 +51,10 @@ jobs:
           sudo make install
           ruby-install --version
 
-      # Run your build script
+      # Run your build script. BUILD_PATH and ARCHIVE_PATH are used by this script.
       - name: Run build script
         run: |
           bash builder/build.sh
-          mv build/build.tar.gz ${{ matrix.os }}-${{ matrix.arch }}.tar.gz
 
       # Upload the final tar.gz artifact for each OS/arch
       - name: Upload build artifact

@@ -1,11 +1,12 @@
 ROOT_PATH="$(dirname "$0")"
 
 # Setup paths
-BUILD_PATH="$PWD/build"
+BUILD_PATH="${BUILD_PATH:-$PWD/build}"
 
 # We'll copy the package template into the build directory.
 PACKAGE_PATH="$BUILD_PATH/package"
 
+echo "Building package at $PACKAGE_PATH"
 mkdir -p "$PACKAGE_PATH"
 
 ### Copy the package template into the build directory
@@ -69,11 +70,11 @@ EOF
 # Example usage of shim function
 generate-gem-exec "terminalwire" "terminalwire-exec"
 
-# Define the tarball name
-ARCHIVE_PATH="$BUILD_PATH/build.tar.gz"
+# Allow incoming ARCHIVE_PATH, fallback to default
+ARCHIVE_PATH="${ARCHIVE_PATH:-$BUILD_PATH/build.tar.gz}"
 
 # Create the tarball
-echo "Packaging build directory into $ARCHIVE_PATH..."
+echo "Packaging $PACKAGE_PATH into $ARCHIVE_PATH..."
 tar -czf "$ARCHIVE_PATH" -C "$PACKAGE_PATH" .
 
 # Calculate and display the file size in MB
