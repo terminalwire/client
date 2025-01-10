@@ -56,10 +56,26 @@ jobs:
         run: |
           bash builder/build.sh
 
-      - name: Verify binary architecture
+      - name: Log package architecture
         run: |
-          file "$BUILD_PATH/vendor/bin/ruby"
+          validate() {
+            local dir="$1"
+            if [[ ! -d "$dir" ]]; then
+              echo "Error: '$dir' is not a directory or does not exist." >&2
+              return 1
+            fi
+
+            find "$dir" -type f | while read -r filepath; do
+              filetype=$(file -b "$filepath")
+              echo "$filepath [$filetype]"
+            done
+          }
+
           uname -m
+          uname -s
+
+          validate "$BUILD_PATH/package/vendor/bin"
+          validate .
 
       # Upload the final tar.gz artifact for each OS/arch
       - name: Upload build artifact
