@@ -56,6 +56,11 @@ jobs:
         run: |
           bash builder/build.sh
 
+      - name: Verify binary architecture
+        run: |
+          file "$BUILD_PATH/vendor/bin/ruby"
+          uname -m
+
       # Upload the final tar.gz artifact for each OS/arch
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
